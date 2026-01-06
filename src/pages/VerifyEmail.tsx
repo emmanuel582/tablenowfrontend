@@ -26,7 +26,8 @@ const VerifyEmail: React.FC = () => {
             const response = await authAPI.verifyEmail(token);
             setStatus('success');
             setMessage(response.data.message);
-            setTimeout(() => navigate('/login'), 3000);
+            // Immediate redirect to login after success
+            setTimeout(() => navigate('/login'), 2000);
         } catch (error: any) {
             setStatus('error');
             setMessage(error.response?.data?.error || 'Verification failed');
@@ -37,8 +38,8 @@ const VerifyEmail: React.FC = () => {
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
             <div className="max-w-md w-full text-center">
                 <div className={`border-4 rounded-2xl p-8 ${status === 'success' ? 'bg-green-50 border-green-500' :
-                        status === 'error' ? 'bg-red-50 border-red-500' :
-                            'bg-gray-50 border-gray-300'
+                    status === 'error' ? 'bg-red-50 border-red-500' :
+                        'bg-gray-50 border-gray-300'
                     }`}>
                     <div className="flex justify-center mb-4">
                         {status === 'loading' && (

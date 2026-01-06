@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [dateRange, setDateRange] = useState('7');
+    const [dateRange, setDateRange] = useState('all');
 
     useEffect(() => {
         fetchStats();
@@ -27,14 +27,23 @@ const Dashboard: React.FC = () => {
 
     const fetchStats = async () => {
         try {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - parseInt(dateRange));
+            const today = new Date();
+            let params: any = {};
 
-            const response = await dashboardAPI.getStats({
-                startDate: startDate.toISOString().split('T')[0],
-                endDate: endDate.toISOString().split('T')[0]
-            });
+            if (dateRange === 'upcoming90') {
+                const end = new Date();
+                end.setDate(end.getDate() + 90);
+                params.startDate = today.toISOString().split('T')[0];
+                params.endDate = end.toISOString().split('T')[0];
+            } else if (dateRange !== 'all') {
+                const days = parseInt(dateRange, 10);
+                const start = new Date();
+                start.setDate(start.getDate() - days);
+                params.startDate = start.toISOString().split('T')[0];
+                params.endDate = today.toISOString().split('T')[0];
+            }
+
+            const response = await dashboardAPI.getStats(params);
             setStats(response.data);
         } catch (error) {
             console.error('Failed to fetch stats:', error);
@@ -67,9 +76,11 @@ const Dashboard: React.FC = () => {
                         onChange={(e) => setDateRange(e.target.value)}
                         className="input"
                     >
+                        <option value="all">All time</option>
                         <option value="7">Last 7 days</option>
                         <option value="30">Last 30 days</option>
                         <option value="90">Last 90 days</option>
+                        <option value="upcoming90">Next 90 days</option>
                     </select>
                 </div>
             </div>

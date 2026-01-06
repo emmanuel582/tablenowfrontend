@@ -12,7 +12,27 @@ const Settings: React.FC = () => {
 
     useEffect(() => {
         fetchSettings();
+
+        // Check for Google Calendar code
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        if (code) {
+            handleCalendarCallback(code);
+        }
     }, []);
+
+    const handleCalendarCallback = async (code: string) => {
+        try {
+            setMessage({ type: 'success', text: 'Connecting Google Calendar...' });
+            await calendarAPI.callback(code);
+            await refreshUser();
+            setMessage({ type: 'success', text: 'Google Calendar connected successfully!' });
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Failed to connect Google Calendar' });
+        }
+    };
 
     const fetchSettings = async () => {
         try {
