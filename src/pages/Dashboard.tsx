@@ -11,8 +11,10 @@ import {
     XCircle,
     PhoneCall,
     Mail,
-    Settings as SettingsIcon
+    Settings as SettingsIcon,
+    AlertCircle
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Dashboard: React.FC = () => {
@@ -64,6 +66,29 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="space-y-6 animate-fade-in">
+            {/* AI Setup Alert */}
+            {(user?.status === 'error' || !user?.vapi_assistant_id) && (
+                <div className="bg-red-50 border-2 border-red-500 p-4 rounded-lg flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 shadow-sm animate-pulse-subtle">
+                    <div className="flex items-center space-x-3">
+                        <AlertCircle className="text-red-600 flex-shrink-0" size={28} />
+                        <div>
+                            <p className="font-bold text-red-900">AI Phone Assistant Incomplete</p>
+                            <p className="text-sm text-red-700">
+                                {user?.status === 'error' 
+                                    ? "There was an error during your automated setup. We need one more click to finish."
+                                    : "Your AI assistant is not yet fully configured."}
+                            </p>
+                        </div>
+                    </div>
+                    <Link 
+                        to="/settings" 
+                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-bold transition-colors text-center shadow-md"
+                    >
+                        Complete Setup 🚀
+                    </Link>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div>
